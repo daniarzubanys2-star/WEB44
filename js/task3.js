@@ -1,5 +1,5 @@
 'use strict';
-// Level 3: Hardware Builder & Live Validation
+
 window.Task3 = (() => {
   const BUDGET = 300000, OFFICE_MAX = 180000;
   const ROLES = [
@@ -27,9 +27,16 @@ window.Task3 = (() => {
       { id: 'igpu', name: 'Integrated / Base', price: 15000, tier: 0 },
       { id: '3060', name: 'NVIDIA RTX 3060 12GB', price: 140000, tier: 1 },
       { id: '4070', name: 'NVIDIA RTX 4070', price: 260000, tier: 2 }
+    ],
+    storage: [
+      { id: 'ssd512', name: '512GB NVMe SSD', price: 18000, type: 'SSD' },
+      { id: 'ssd1tb', name: '1TB NVMe SSD', price: 32000, type: 'SSD' },
+      { id: 'ssd2tb', name: '2TB High-Speed SSD', price: 55000, type: 'SSD' }
     ]
   };
-  const LABELS = { cpu: 'CPU', mb: 'Motherboard', ram: 'RAM', gpu: 'GPU' };
+  
+
+  const LABELS = { name: 'Player Name', cpu: 'CPU', mb: 'Motherboard', ram: 'RAM', gpu: 'GPU', storage: 'Storage' };
   const money = n => n.toLocaleString('en-US') + ' ₸';
 
   let api, role, form, fields, touched, summary, previewList, totalEl, statusEl;
@@ -45,6 +52,7 @@ window.Task3 = (() => {
     wrap.append(label, control, err);
     return wrap;
   }
+
   function makeSelect(name) {
     const s = el('select');
     const first = el('option', '', '— Select —'); first.value = '';
@@ -56,14 +64,18 @@ window.Task3 = (() => {
     });
     return s;
   }
-  const pick = name => PARTS[name].find(p => p.id === form.elements[name].value) || null;
+  const pick = name => PARTS[name] ? (PARTS[name].find(p => p.id === form.elements[name].value) || null) : null;
 
   function computeErrors() {
-    const sel = { cpu: pick('cpu'), mb: pick('mb'), ram: pick('ram'), gpu: pick('gpu') };
-    const errs = { name: [], cpu: [], mb: [], ram: [], gpu: [] };
+    const sel = { cpu: pick('cpu'), mb: pick('mb'), ram: pick('ram'), gpu: pick('gpu'), storage: pick('storage') };
+    const errs = { name: [], cpu: [], mb: [], ram: [], gpu: [], storage: [] };
+    
+   
     if (sel.cpu && sel.mb && sel.cpu.socket !== sel.mb.socket) {
       errs.mb.push('Socket mismatch: ' + sel.cpu.name + ' uses ' + sel.cpu.socket + ', but ' + sel.mb.name + ' uses ' + sel.mb.socket + '.');
     }
+    
+    
     const chosen = Object.entries(sel).filter(e => e[1]);
     const total = chosen.reduce((s, e) => s + e[1].price, 0);
     if (chosen.length) {
@@ -71,10 +83,14 @@ window.Task3 = (() => {
       if (total > BUDGET) errs[worst].push('Total ' + money(total) + ' exceeds the ' + money(BUDGET) + ' budget. Choose a cheaper ' + LABELS[worst] + '.');
       else if (role.id === 'office' && total > OFFICE_MAX) errs[worst].push('Office Worker must stay at or under ' + money(OFFICE_MAX) + ' (now ' + money(total) + ').');
     }
+
+    
     if (role.id === 'gamer') {
       if (sel.gpu && sel.gpu.tier < 1) errs.gpu.push('Pro Gamer needs a high-tier GPU (RTX 3060 or better).');
       if (sel.ram && sel.ram.gb < 16) errs.ram.push('Pro Gamer needs at least 16GB RAM.');
     }
+
+  
     if (role.id === 'designer') {
       if (sel.cpu && sel.cpu.tier < 2) errs.cpu.push('3D Designer needs a high-tier CPU (Core i7-13700K).');
       if (sel.ram && sel.ram.gb < 32) errs.ram.push('3D Designer needs 32GB RAM.');
@@ -90,7 +106,6 @@ window.Task3 = (() => {
     return f.validationMessage;
   }
 
-  // Validates all fields; shows messages for touched ones (or all when showAll)
   function validate(showAll) {
     const errs = computeErrors();
     const invalid = [];
@@ -125,6 +140,8 @@ window.Task3 = (() => {
     const nameInput = el('input'); nameInput.type = 'text'; nameInput.minLength = 2; nameInput.maxLength = 20;
     nameInput.pattern = '[A-Za-z0-9_ ]+'; nameInput.autocomplete = 'off';
     const submit = el('button', 'btn', 'Assemble PC'); submit.type = 'submit';
+    
+  
     form.append(summary, field('name', 'Player name', nameInput));
     Object.keys(PARTS).forEach(k => form.append(field(k, LABELS[k], makeSelect(k))));
     form.append(submit);
