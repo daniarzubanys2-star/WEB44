@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Developer's Journey: The Ascension</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/task1.js"></script>
+  <script defer src="js/task2.js"></script>
+  <script defer src="js/task3.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">&lt;Developer's Journey/&gt;</h1>
+    <div id="timer-box" class="timer-box" hidden>
+      <span>Quest time</span>
+      <strong id="global-timer" role="timer" aria-live="off">05:00</strong>
+    </div>
+  </header>
+
+  <main class="container">
+    <section data-screen="intro" class="card">
+      <h2>The Ascension</h2>
+      <p>You are burned out from being just another junior developer. You want the leap to Senior / Tech Lead.</p>
+      <p>To prove you are worthy, survive <strong>3 hardcore technical challenges</strong> before the global timer runs out. Each level ends with a Secret Access Key you must enter to unlock the next one.</p>
+      <ul class="rules">
+        <li>Global quest timer: 5 minutes.</li>
+        <li>Level 1: fix the broken HTML tag (60 seconds, with a penalty quiz).</li>
+        <li>Level 2: rebuild a missing JavaScript line (3 attempts).</li>
+        <li>Level 3: build a PC for a random role within budget.</li>
+      </ul>
+      <button class="btn" data-action="start">Start the quest</button>
+    </section>
+
+    <section data-screen="task1" class="card" hidden><div id="task1-root"></div></section>
+
+    <section data-screen="key" class="card" hidden>
+      <h2 id="key-title">Level complete</h2>
+      <p>Your Secret Access Key:</p>
+      <code id="key-display" class="key"></code>
+      <form id="key-form" novalidate>
+        <label for="key-input">Enter the key to unlock the next level</label>
+        <input id="key-input" type="text" autocomplete="off" aria-describedby="key-error">
+        <p id="key-error" class="error" role="alert"></p>
+        <button class="btn" type="submit">Unlock next level</button>
+      </form>
+    </section>
+
+    <section data-screen="task2" class="card" hidden><div id="task2-root"></div></section>
+    <section data-screen="task3" class="card" hidden><div id="task3-root"></div></section>
+
+    <section data-screen="finish" class="card" hidden>
+      <h2 class="success-title">Promotion unlocked!</h2>
+      <p id="finish-summary"></p>
+      <h3>Leaderboard</h3>
+      <div class="table-wrap">
+        <table class="board">
+          <thead><tr><th>#</th><th>Player</th><th>Time spent</th></tr></thead>
+          <tbody id="board-body"></tbody>
+        </table>
+      </div>
+      <button class="btn" data-action="restart">Play Again</button>
+    </section>
+
+    <section data-screen="over" class="card" hidden>
+      <h2 class="fail-title">Game Over</h2>
+      <p id="over-reason"></p>
+      <button class="btn" data-action="restart">Play Again</button>
+    </section>
+  </main>
+</body>
+</html>
